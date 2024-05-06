@@ -17,5 +17,6 @@ class Constants
     const HTTP_FETCHING_MSG = 'Datos obtenidos correctamente';
     const HTTP_UNAUTHORIZED_MSG = 'No autorizado';
     const HTTP_FORBIDDEN_MSG = 'No tienes permisos para esto';
+    const HTTP_NOT_FOUND_MSG = 'Recurso no encontrado';
 
 }
