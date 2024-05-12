@@ -16,58 +16,69 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group([
     'prefix' => 'v1',
-], function(){
+], function () {
 
-    Route::post('auth', function(Request $request){
+    Route::post('auth', function (Request $request) {
         $credentials = [
             'email' => $request->email,
             'password' => $request->password
         ];
-    
-        if(Auth::attempt($credentials)){
+
+        if (Auth::attempt($credentials)) {
             $user = Auth::user();
-    
+
             $basicToken = $user->createToken('basic-token');
-    
+
             return [
                 'token' => $basicToken->plainTextToken,
                 'user' => $user
             ];
-    
         }
     });
 
-    Route::post('sign-up', function(Request $request){
+    Route::post('sign-up', function (Request $request) {
 
-        try{
+        try {
             $user = new User([
                 'name' => $request->email,
                 'email' => $request->email,
                 'password' => Hash::make($request->password)
             ]);
-        
+
             $user->save();
-    
+
+            $credentials = [
+                'email' => $request->email,
+                'password' => $request->password
+            ];
+            Auth::attempt($credentials);
+            $user = Auth::user();
+
+            $basicToken = $user->createToken('basic-token');
+
             return [
-                'data' => $user,
+                'data' => [
+                    'user' => $user,
+                    'token' => $basicToken->plainTextToken
+                ],
                 'status' => Constants::HTTP_CREATED_CODE,
                 'message' => Constants::HTTP_CREATED_MSG
             ];
-        }catch(QueryException $e){
-            if($e->errorInfo && $e->errorInfo[1] == 1062){
+        } catch (QueryException $e) {
+            if ($e->errorInfo && $e->errorInfo[1] == 1062) {
                 return [
                     'data' => [],
                     'status' => Constants::HTTP_BAD_REQUEST_CODE,
                     'message' => 'El email ya está en uso'
                 ];
-            }else{
+            } else {
                 return [
                     'data' => [],
                     'status' => Constants::HTTP_SERVER_ERROR_CODE,
                     'message' => Constants::HTTP_SERVER_ERROR_MSG
                 ];
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return [
                 'data' => [],
                 'status' => Constants::HTTP_SERVER_ERROR_CODE,
@@ -82,7 +93,7 @@ Route::group([
     'prefix' => 'v1',
     'namespace' => 'App\Http\Controllers\Api\V1',
     'middleware' => 'auth:sanctum'
-], function(){
+], function () {
     Route::apiResource('habits', HabitsController::class);
     Route::apiResource('habit-records', HabitRecordsController::class);
 });
