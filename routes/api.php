@@ -1,8 +1,10 @@
 <?php
 
+use App\Constants;
 use App\Http\Controllers\V1\HabitRecordsController;
 use App\Http\Controllers\V1\HabitsController;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -36,13 +38,42 @@ Route::group([
     });
 
     Route::post('sign-up', function(Request $request){
-        $user = new User([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
-        ]);
 
-        $user->save();
+        try{
+            $user = new User([
+                'name' => $request->email,
+                'email' => $request->email,
+                'password' => Hash::make($request->password)
+            ]);
+        
+            $user->save();
+    
+            return [
+                'data' => $user,
+                'status' => Constants::HTTP_CREATED_CODE,
+                'message' => Constants::HTTP_CREATED_MSG
+            ];
+        }catch(QueryException $e){
+            if($e->errorInfo && $e->errorInfo[1] == 1062){
+                return [
+                    'data' => [],
+                    'status' => Constants::HTTP_BAD_REQUEST_CODE,
+                    'message' => 'El email ya está en uso'
+                ];
+            }else{
+                return [
+                    'data' => [],
+                    'status' => Constants::HTTP_SERVER_ERROR_CODE,
+                    'message' => Constants::HTTP_SERVER_ERROR_MSG
+                ];
+            }
+        }catch(Exception $e){
+            return [
+                'data' => [],
+                'status' => Constants::HTTP_SERVER_ERROR_CODE,
+                'message' => Constants::HTTP_SERVER_ERROR_MSG
+            ];
+        }
     });
 });
 
