@@ -22,7 +22,6 @@ class StoreHabitRecordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'max:50'],
             'habitId' => ['required', 'exists:habits,id'],
             'date' => ['sometimes', 'date'],
             'repetitions' => ['required', 'numeric'],

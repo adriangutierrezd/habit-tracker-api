@@ -26,14 +26,12 @@ class UpdateHabitRecordRequest extends FormRequest
         $method = $this->method();
         if ($method === 'PUT') {
             return [
-                'name' => ['required', 'max:50'],
                 'habitId' => ['required', 'exists:habits,id'],
                 'date' => ['required', 'date'],
                 'repetitions' => ['required', 'numeric'],
             ];
         } else {
             return [
-                'name' => ['sometimes', 'required', 'max:50'],
                 'habitId' => ['sometimes', 'required', 'exists:habits,id'],
                 'date' => ['sometimes', 'date'],
                 'repetitions' => ['sometimes', 'required', 'numeric'],

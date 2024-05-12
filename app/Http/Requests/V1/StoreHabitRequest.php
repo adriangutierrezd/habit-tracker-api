@@ -29,4 +29,13 @@ class StoreHabitRequest extends FormRequest
             'max_repetitions' => ['required', 'integer']
         ];
     }
+
+    protected function prepareForValidation()
+    {
+        if($this->maxRepetitions){
+            $this->merge([
+                'max_repetitions' => $this->maxRepetitions
+            ]);
+        }
+    }
 }

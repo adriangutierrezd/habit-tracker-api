@@ -26,7 +26,7 @@ class HabitsController extends Controller
         $habits = Habit::where([
             ...$queryItems,
             'user_id' => $request->user()->id
-        ])->get();
+        ])->with('habitRecords')->get();
 
         return [
             'data' => new HabitCollection($habits),

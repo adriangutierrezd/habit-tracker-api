@@ -91,7 +91,7 @@ Route::group([
 
 Route::group([
     'prefix' => 'v1',
-    'namespace' => 'App\Http\Controllers\Api\V1',
+    'namespace' => 'App\Http\Controllers\V1',
     'middleware' => 'auth:sanctum'
 ], function () {
     Route::apiResource('habits', HabitsController::class);

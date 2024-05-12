@@ -43,4 +43,14 @@ class UpdateHabitRequest extends FormRequest
             ];
         }
     }
+
+
+    protected function prepareForValidation()
+    {
+        if($this->maxRepetitions){
+            $this->merge([
+                'max_repetitions' => $this->maxRepetitions
+            ]);
+        }
+    }
 }
