@@ -12,7 +12,7 @@ class UpdateHabitRecordRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $habitRecord = $this->route('habitRecord');
+        $habitRecord = $this->route('habit_record');
         return $this->user() != null && $this->user()->can('update', [$habitRecord, HabitRecordPolicy::class]);
     }
 
