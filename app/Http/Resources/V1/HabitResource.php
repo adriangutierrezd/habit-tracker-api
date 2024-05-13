@@ -21,7 +21,7 @@ class HabitResource extends JsonResource
             'description' => $this->description,
             'userId' => $this->user_id,
             'frequency' => $this->frequency,
-            'max_repetitions' => $this->maxRepetitions,
+            'maxRepetitions' => $this->max_repetitions,
             'records' => new HabitRecordCollection($this->whenLoaded('habitRecords'))
         ];
     }
