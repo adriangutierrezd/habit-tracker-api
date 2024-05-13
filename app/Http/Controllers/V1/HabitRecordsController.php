@@ -9,6 +9,8 @@ use App\Http\Requests\V1\StoreHabitRecordRequest;
 use App\Http\Requests\V1\UpdateHabitRecordRequest;
 use App\Http\Resources\V1\HabitRecordCollection;
 use App\Http\Resources\V1\HabitRecordResource;
+use App\Http\Resources\V1\HabitResource;
+use App\Models\Habit;
 use App\Models\HabitRecord;
 use App\Policies\V1\HabitRecordPolicy;
 use Illuminate\Http\Request;
@@ -64,8 +66,12 @@ class HabitRecordsController extends Controller
             'user_id' => $request->user()->id
         ]);
 
+        $habit = Habit::where([
+            'id' => $habitRecord->habit_id,
+        ])->with('habitRecords')->first();
+
         return [
-            'data' => new HabitRecordResource($habitRecord),
+            'data' => new HabitResource($habit),
             'status' => Constants::HTTP_CREATED_CODE,
             'message' => Constants::HTTP_CREATED_MSG
         ];
@@ -90,8 +96,12 @@ class HabitRecordsController extends Controller
         ]);
 
 
+        $habit = Habit::where([
+            'id' => $habitRecord->habit_id,
+        ])->with('habitRecords')->first();
+
         return [
-            'data' => new HabitRecordResource($habitRecord),
+            'data' => new HabitResource($habit),
             'status' => Constants::HTTP_OK_CODE,
             'message' => Constants::HTTP_UPDATED_MSG
         ];
