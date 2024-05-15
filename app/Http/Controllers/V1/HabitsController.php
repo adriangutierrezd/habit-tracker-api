@@ -10,11 +10,15 @@ use App\Http\Requests\V1\UpdateHabitRequest;
 use App\Http\Resources\V1\HabitCollection;
 use App\Http\Resources\V1\HabitResource;
 use App\Models\Habit;
+use App\Models\HabitRecord;
 use App\Policies\V1\HabitPolicy;
+use App\Utils;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class HabitsController extends Controller
 {
+
     
     /**
      * Retrieves a listing of resources
@@ -26,10 +30,45 @@ class HabitsController extends Controller
         $habits = Habit::where([
             ...$queryItems,
             'user_id' => $request->user()->id
-        ])->with('habitRecords')->get();
+        ])->with(['habitRecords' => function($query) {
+            $query->where('date', '>=', now()->subYear());
+        }])->get();
+
+        $end = Carbon::now();
+        $start = $end->copy()->subYear();
+        $dates = Utils::getDateRange($start, $end);
+
+        $completedHabits = $habits->map(function (Habit $habit) use($dates) {
+            $newHabit = $habit->replicate();
+            $oldRecords = $newHabit->habitRecords;
+            $oldRecordsFormat = [];
+            foreach($oldRecords as $oldRecord){
+                $oldRecordsFormat[$oldRecord['date']] = $oldRecord;
+            }
+            $newHabit->unsetRelation('habitRecords');
+            $newHabit->id = $habit->id;
+            $newRecords = [];
+            foreach($dates as $date){
+                if(array_key_exists($date, $oldRecordsFormat)){
+                    $newRecords[] = $oldRecordsFormat[$date];
+                    continue;
+                }
+                $record = new HabitRecord([
+                    'id' => 0,
+                    'user_id' => 0,
+                    'habit_id' => $habit->id,
+                    'date' => $date,
+                    'repetitions' => 0
+                ]);
+                $newRecords[] = $record;
+            }
+
+            $newHabit->setRelation('habitRecords', $newRecords);
+            return $newHabit;
+        });
 
         return [
-            'data' => new HabitCollection($habits),
+            'data' => new HabitCollection($completedHabits),
             'status' => Constants::HTTP_OK_CODE,
             'message' => Constants::HTTP_FETCHING_MSG
         ];
@@ -63,7 +102,6 @@ class HabitsController extends Controller
             ...$request->all(),
             'user_id' => $request->user()->id
         ]);
-
 
         return [
             'data' => new HabitResource($habit),

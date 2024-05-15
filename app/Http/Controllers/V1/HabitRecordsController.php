@@ -8,17 +8,19 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreHabitRecordRequest;
 use App\Http\Requests\V1\UpdateHabitRecordRequest;
 use App\Http\Resources\V1\HabitRecordCollection;
-use App\Http\Resources\V1\HabitRecordResource;
 use App\Http\Resources\V1\HabitResource;
 use App\Models\Habit;
 use App\Models\HabitRecord;
 use App\Policies\V1\HabitRecordPolicy;
+use App\Utils;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class HabitRecordsController extends Controller
 {
-        /**
+    
+    /**
      * Retrieves a listing of resources
      */
     public function index(Request $request)
@@ -70,8 +72,39 @@ class HabitRecordsController extends Controller
             'id' => $habitRecord->habit_id,
         ])->with('habitRecords')->first();
 
+
+        $end = Carbon::now();
+        $start = $end->copy()->subYear();
+        $dates = Utils::getDateRange($start, $end);
+
+        $newHabit = $habit->replicate();
+        $oldRecords = $newHabit->habitRecords;
+        $oldRecordsFormat = [];
+        foreach($oldRecords as $oldRecord){
+            $oldRecordsFormat[$oldRecord['date']] = $oldRecord;
+        }
+        $newHabit->unsetRelation('habitRecords');
+        $newHabit->id = $habit->id;
+        $newRecords = [];
+        foreach($dates as $date){
+            if(array_key_exists($date, $oldRecordsFormat)){
+                $newRecords[] = $oldRecordsFormat[$date];
+                continue;
+            }
+            $record = new HabitRecord([
+                'id' => 0,
+                'user_id' => 0,
+                'habit_id' => $habit->id,
+                'date' => $date,
+                'repetitions' => 0
+            ]);
+            $newRecords[] = $record;
+        }
+
+        $newHabit->setRelation('habitRecords', $newRecords);
+
         return [
-            'data' => new HabitResource($habit),
+            'data' => new HabitResource($newHabit),
             'status' => Constants::HTTP_CREATED_CODE,
             'message' => Constants::HTTP_CREATED_MSG
         ];
@@ -100,8 +133,38 @@ class HabitRecordsController extends Controller
             'id' => $habitRecord->habit_id,
         ])->with('habitRecords')->first();
 
+        $end = Carbon::now();
+        $start = $end->copy()->subYear();
+        $dates = Utils::getDateRange($start, $end);
+
+        $newHabit = $habit->replicate();
+        $oldRecords = $newHabit->habitRecords;
+        $oldRecordsFormat = [];
+        foreach($oldRecords as $oldRecord){
+            $oldRecordsFormat[$oldRecord['date']] = $oldRecord;
+        }
+        $newHabit->unsetRelation('habitRecords');
+        $newHabit->id = $habit->id;
+        $newRecords = [];
+        foreach($dates as $date){
+            if(array_key_exists($date, $oldRecordsFormat)){
+                $newRecords[] = $oldRecordsFormat[$date];
+                continue;
+            }
+            $record = new HabitRecord([
+                'id' => 0,
+                'user_id' => 0,
+                'habit_id' => $habit->id,
+                'date' => $date,
+                'repetitions' => 0
+            ]);
+            $newRecords[] = $record;
+        }
+
+        $newHabit->setRelation('habitRecords', $newRecords);
+
         return [
-            'data' => new HabitResource($habit),
+            'data' => new HabitResource($newHabit),
             'status' => Constants::HTTP_OK_CODE,
             'message' => Constants::HTTP_UPDATED_MSG
         ];
