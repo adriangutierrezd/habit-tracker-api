@@ -120,6 +120,12 @@ class HabitsController extends Controller
         }
 
         $habit->delete();
+
+        return [
+            'data' => [],
+            'status' => Constants::HTTP_OK_CODE,
+            'message' => Constants::HTTP_UPDATED_MSG
+        ];
     }
 
 }
