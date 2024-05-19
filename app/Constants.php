@@ -21,5 +21,6 @@ class Constants
     const HTTP_FORBIDDEN_MSG = 'No tienes permisos para esto';
     const HTTP_NOT_FOUND_MSG = 'Recurso no encontrado';
     const HTTP_SERVER_ERROR_MSG = 'Ha ocurrido un error inesperado';
-
+    const HTTP_BAD_REQUEST_MSG = 'Solicitud errónea';
+    
 }

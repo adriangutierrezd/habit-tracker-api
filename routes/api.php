@@ -96,4 +96,8 @@ Route::group([
 ], function () {
     Route::apiResource('habits', HabitsController::class);
     Route::apiResource('habit-records', HabitRecordsController::class);
+
+    Route::post('add-habit-record-repetition/{habit}', [HabitRecordsController::class, 'addRepetition']);
+    Route::post('reset-habit-record-repetition/{habit}', [HabitRecordsController::class, 'resetRepetitions']);
+
 });
