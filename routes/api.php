@@ -30,8 +30,18 @@ Route::group([
             $basicToken = $user->createToken('basic-token');
 
             return [
-                'token' => $basicToken->plainTextToken,
-                'user' => $user
+                'data' => [
+                    'token' => $basicToken->plainTextToken,
+                    'user' => $user
+                ],
+                'status' => Constants::HTTP_OK_CODE,
+                'message' => Constants::HTTP_FETCHING_MSG
+            ];
+        }else{
+            return [
+                'data' => [],
+                'status' => Constants::HTTP_BAD_REQUEST_CODE,
+                'message' => Constants::HTTP_AUTH_ERROR_MSG
             ];
         }
     });
