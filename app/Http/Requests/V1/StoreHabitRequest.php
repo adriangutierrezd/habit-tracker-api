@@ -25,7 +25,6 @@ class StoreHabitRequest extends FormRequest
             'name' => ['required', 'max:50'],
             'description' => ['sometimes', 'max:255'],
             'color' => ['required', 'max:7'],
-            'frequency' => ['required', 'in:DAY,WEEK,MONTH,FORTNIGHT'],
             'max_repetitions' => ['required', 'integer']
         ];
     }

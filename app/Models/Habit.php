@@ -14,7 +14,6 @@ class Habit extends Model
         'name',
         'color',
         'description',
-        'frequency',
         'max_repetitions'
     ];
 

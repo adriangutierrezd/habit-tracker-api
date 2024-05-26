@@ -6,7 +6,7 @@ use App\Filters\ApiFilter;
 class HabitsFilter extends ApiFilter{
 
     protected $allowedParams = [
-        'frequency' => ['eq']
+        'name' => ['eq']
     ];
 
     protected $columnMap = [];

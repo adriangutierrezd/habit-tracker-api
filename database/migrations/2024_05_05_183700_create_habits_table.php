@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('name', 50);
             $table->string('description', 255)->nullable();
             $table->string('color', 7);
-            $table->enum('frequency', ['DAY', 'WEEK', 'MONTH', 'FORTNIGHT']);
             $table->unsignedSmallInteger('max_repetitions');
             $table->timestamps();
         });

@@ -29,7 +29,6 @@ class UpdateHabitRequest extends FormRequest
             return [
                 'name' => ['required', 'max:100'],
                 'description' => ['sometimes', 'max:255'],
-                'frequency' => ['required', 'in:DAY,WEEK,MONTH,FORTNIGHT'],
                 'max_repetitions' => ['required', 'integer'],
                 'color' => ['required', 'max:7']
             ];
@@ -37,7 +36,6 @@ class UpdateHabitRequest extends FormRequest
             return [
                 'name' => ['sometimes', 'required', 'max:100'],
                 'description' => ['sometimes', 'max:255'],
-                'frequency' => ['sometimes', 'required', 'in:DAY,WEEK,MONTH,FORTNIGHT'],
                 'max_repetitions' => ['sometimes', 'required', 'integer'],
                 'color' => ['sometimes', 'required', 'max:7']
             ];

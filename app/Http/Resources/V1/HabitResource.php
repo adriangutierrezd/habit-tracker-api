@@ -20,7 +20,6 @@ class HabitResource extends JsonResource
             'color' => $this->color,
             'description' => $this->description,
             'userId' => $this->user_id,
-            'frequency' => $this->frequency,
             'maxRepetitions' => $this->max_repetitions,
             'records' => new HabitRecordCollection($this->whenLoaded('habitRecords'))
         ];
